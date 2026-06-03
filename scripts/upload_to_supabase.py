@@ -1,15 +1,15 @@
 import pandas as pd
 from sqlalchemy import create_engine
 
-# Load cleaned CSV
+# 1. Load your cleaned CSV
 df = pd.read_csv("data/processed/life_expectancy_clean.csv")
 
-# PostgreSQL connection
+# 2. Supabase connection
 engine = create_engine(
-    "postgresql+psycopg2://postgres:YOUR_PASSWORD@db.xxxxx.supabase.co:5432/postgres"
+    "postgresql+psycopg2://postgres:Password@db.yhaiasmiepaqidykdbsm.supabase.co:5432/postgres"
 )
 
-# Import dataframe into PostgreSQL
+# 3. Upload to Supabase
 df.to_sql(
     "life_expectancy",
     engine,
@@ -17,4 +17,4 @@ df.to_sql(
     index=False
 )
 
-print("Data imported successfully!")
+print("Uploaded to Supabase successfully!")
