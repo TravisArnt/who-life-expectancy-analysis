@@ -4,7 +4,8 @@ An analytics engineering project exploring global life expectancy trends using W
 Built with Python, SQL, Supabase, and Streamlit.
 
 🔗 [Live demo](https://who-life-expectancy-analysis.onrender.com/)
-Dataset
+
+## Dataset
 
 This project uses the Life Expectancy WHO dataset from Kaggle. The dataset contains country-level health, economic, and demographic indicators from 2000 to 2015.
 
