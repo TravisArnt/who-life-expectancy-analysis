@@ -84,13 +84,20 @@ st.divider()
 # ═══════════════════════════════════════════════════════════════════════════════
 # ROW 1 — KPI cards
 # ═══════════════════════════════════════════════════════════════════════════════
-row = df_overview.iloc[0]
+df_kpi = apply_filters(df_box, year_col="year").dropna(subset=["lifeexpectancy"])
+
 k1, k2, k3, k4, k5 = st.columns(5)
-k1.metric("Avg life expectancy", f"{row['avg_life_expectancy']} yrs")
-k2.metric("Max life expectancy", f"{row['max_life_expectancy']} yrs")
-k3.metric("Min life expectancy", f"{row['min_life_expectancy']} yrs")
-k4.metric("Total countries",     int(row['total_countries']))
-k5.metric("Year range",          f"{int(row['start_year'])}–{int(row['end_year'])}")
+if df_kpi.empty:
+    k1.metric("Avg life expectancy", "N/A")
+    k2.metric("Max life expectancy", "N/A")
+    k3.metric("Min life expectancy", "N/A")
+    k4.metric("Total countries", 0)
+else:
+    k1.metric("Avg life expectancy", f"{df_kpi['lifeexpectancy'].mean():.2f} yrs")
+    k2.metric("Max life expectancy", f"{df_kpi['lifeexpectancy'].max():.1f} yrs")
+    k3.metric("Min life expectancy", f"{df_kpi['lifeexpectancy'].min():.1f} yrs")
+    k4.metric("Total countries", int(df_kpi["country"].nunique()))
+k5.metric("Year range", f"{year_range[0]}–{year_range[1]}")
 
 st.divider()
 
