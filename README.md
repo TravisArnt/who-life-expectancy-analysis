@@ -3,7 +3,7 @@
 An analytics engineering project exploring global life expectancy trends using WHO data (2000–2015). 
 Built with Python, SQL, Supabase, and Streamlit.
 
-🔗 [Live demo](https://your-render-url.com)
+🔗 [Live demo](https://who-life-expectancy-analysis.onrender.com/)
 
 ## Project Workflow
 
