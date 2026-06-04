@@ -27,5 +27,5 @@ SELECT
     "country",
     "year",
     "status",
-    "life_expectancy"
+    "lifeexpectancy"
 FROM life_expectancy;

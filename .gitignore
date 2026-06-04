@@ -8,3 +8,10 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Dashboards 
+app.py
+improved.py
