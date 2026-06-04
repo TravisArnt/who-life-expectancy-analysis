@@ -4,6 +4,11 @@ An analytics engineering project exploring global life expectancy trends using W
 Built with Python, SQL, Supabase, and Streamlit.
 
 🔗 [Live demo](https://who-life-expectancy-analysis.onrender.com/)
+Dataset
+
+This project uses the Life Expectancy WHO dataset from Kaggle. The dataset contains country-level health, economic, and demographic indicators from 2000 to 2015.
+
+Dataset source: [Life Expectancy WHO Dataset](https://www.kaggle.com/datasets/kumarajarshi/life-expectancy-who)
 
 ## Project Workflow
 
@@ -35,6 +40,27 @@ This project follows an analytics engineering workflow:
      * Vaccine coverage analysis
      * Health factor analysis
      * Top and bottom country rankings
+
+
+## Dashboard Features
+
+The dashboard allows users to explore WHO life expectancy data through interactive visualizations, including:
+
+* Global life expectancy trends
+* Developed vs developing country comparison
+* Vaccine coverage analysis
+* Health factor analysis
+* Top and bottom country rankings
+
+## Tech Stack
+
+* Python
+* pandas
+* PostgreSQL / Supabase
+* SQL
+* Streamlit
+* Plotly
+* Render
 
 ## Deployment
 
@@ -92,22 +118,3 @@ SUPABASE_KEY = "your-supabase-anon-key"
 streamlit run main.py
 ```
 
-## Dashboard Features
-
-The dashboard allows users to explore WHO life expectancy data through interactive visualizations, including:
-
-* Global life expectancy trends
-* Developed vs developing country comparison
-* Vaccine coverage analysis
-* Health factor analysis
-* Top and bottom country rankings
-
-## Tech Stack
-
-* Python
-* pandas
-* PostgreSQL / Supabase
-* SQL
-* Streamlit
-* Plotly
-* Render
