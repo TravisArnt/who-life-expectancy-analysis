@@ -6,36 +6,38 @@ import plotly.graph_objects as go
 from supabase import create_client, Client
 
 
-def get_secret(key: str):
-    """
-    First checks Render environment variables.
-    If not found, falls back to Streamlit secrets.
-    """
-    return os.getenv(key) or st.secrets[key]
-
-# Iniitialize connection to db
-
-@st.cache_resource
-def init_connection():
-    url: str = get_secret("supabase_url")
-    key: str = get_secret("supabase_key")
-
-    client: Client = create_client(url, key)
-    return client
-
-
-client = init_connection()
-
 st.set_page_config(
     page_title="WHO Life Expectancy",
     page_icon="🌍",
     layout="wide"
 )
 
-# ── Connection & caching ──────────────────────────────────────────────────────
+
+def get_secret(key: str) -> str:
+    """
+    Read config from Render environment variables first, then local
+    Streamlit secrets for development.
+    """
+    value = os.getenv(key) or os.getenv(key.upper())
+    if value:
+        return value
+
+    try:
+        return st.secrets[key]
+    except Exception as exc:
+        raise RuntimeError(
+            f"Missing required setting '{key}'. Add it as a Render environment "
+            f"variable, or add it to .streamlit/secrets.toml for local runs."
+        ) from exc
+
+
 @st.cache_resource
 def init_connection() -> Client:
-    return create_client(st.secrets["supabase_url"], st.secrets["supabase_key"])
+    url: str = get_secret("supabase_url")
+    key: str = get_secret("supabase_key")
+
+    return create_client(url, key)
+
 
 client = init_connection()
 

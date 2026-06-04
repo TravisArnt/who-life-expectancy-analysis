@@ -4,12 +4,21 @@ from sqlalchemy import create_engine
 import streamlit as st
 from sqlalchemy.engine import URL
 
-def get_secret(key: str):
+def get_secret(key: str) -> str:
     """
-    First checks Render environment variables.
-    If not found, falls back to Streamlit secrets.
+    Read config from environment variables first, then local Streamlit secrets.
     """
-    return os.getenv(key) or st.secrets[key]
+    value = os.getenv(key) or os.getenv(key.upper())
+    if value:
+        return value
+
+    try:
+        return st.secrets[key]
+    except Exception as exc:
+        raise RuntimeError(
+            f"Missing required setting '{key}'. Add it as an environment "
+            f"variable, or add it to .streamlit/secrets.toml for local runs."
+        ) from exc
 # 1. Load cleaned CSV
 df = pd.read_csv("data/processed/life_expectancy_clean.csv")
 
