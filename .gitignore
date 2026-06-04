@@ -15,3 +15,10 @@ wheels/
 # Dashboards 
 app.py
 improved.py
+
+.env.env
+.streamlit/secrets.toml
+__pycache__/
+.DS_Store
+.env
+.streamlit/secrets.toml

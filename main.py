@@ -1,22 +1,30 @@
 import streamlit as st
+import os
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from supabase import create_client, Client
 
 
+def get_secret(key: str):
+    """
+    First checks Render environment variables.
+    If not found, falls back to Streamlit secrets.
+    """
+    return os.getenv(key) or st.secrets[key]
 
 # Iniitialize connection to db
+
 @st.cache_resource
 def init_connection():
-    url:str = st.secrets['supabase_url']
-    key: str = st.secrets['supabase_key']
+    url: str = get_secret("supabase_url")
+    key: str = get_secret("supabase_key")
 
     client: Client = create_client(url, key)
     return client
 
-client = init_connection()
 
+client = init_connection()
 
 st.set_page_config(
     page_title="WHO Life Expectancy",
