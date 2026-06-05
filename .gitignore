@@ -1,5 +1,5 @@
 # Python-generated files
-__pycache__/
+
 *.py[oc]
 build/
 dist/
@@ -17,8 +17,8 @@ app.py
 improved.py
 
 .env.env
-.streamlit/secrets.toml
+
 __pycache__/
 .DS_Store
 .env
-.streamlit/secrets.toml
+
