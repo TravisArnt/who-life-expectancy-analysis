@@ -120,16 +120,18 @@ st.divider()
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("Global life expectancy trend")
-    df_g = df_global[df_global["year"].astype(int).between(*year_range)]
-    fig = px.line(df_g, x="year", y="avg_life_expectancy", markers=True,
-                  labels={"avg_life_expectancy": "Avg (yrs)", "year": ""})
-    fig.update_traces(line_color="#1D9E75", line_width=2.5)
-    fig.update_layout(hovermode="x unified", plot_bgcolor="rgba(0,0,0,0)", margin=dict(t=10,b=10))
+    st.subheader("Life Expectancy Trend by Status")
+    df_g = apply_filters(df_trend, year_col="year")
+    fig = px.line(df_g, x="year", y="avg_life_expectancy", color="status", markers=True,
+                  color_discrete_map={"Developed": "#1D9E75", "Developing": "#378ADD"},
+                  labels={"avg_life_expectancy": "Avg (yrs)", "year": "", "status": ""})
+    fig.update_traces(line_width=2.5)
+    fig.update_layout(hovermode="x unified", plot_bgcolor="rgba(0,0,0,0)",
+                      legend=dict(title="", orientation="h", y=1.1), margin=dict(t=10,b=10))
     st.plotly_chart(fig, use_container_width=True)
 
 with col2:
-    st.subheader("Developed vs developing over time")
+    st.subheader("Annual Life Expectancy by Development Status")
     df_t = apply_filters(df_trend, year_col="year")
     fig2 = px.bar(df_t, x="year", y="avg_life_expectancy", color="status", barmode="group",
                   color_discrete_map={"Developed": "#1D9E75", "Developing": "#378ADD"},
@@ -144,7 +146,7 @@ with col2:
 col3, col4, col5 = st.columns([2, 1, 1])
 
 with col3:
-    st.subheader("Country comparison")
+    st.subheader("Country Life Expectancy Comparison")
     all_countries = sorted(df_country["country"].dropna().unique().tolist())
     defaults = [c for c in ["Thailand","Japan","United States of America","Nigeria","Brazil"] if c in all_countries]
     selected = st.multiselect("Select countries", all_countries, default=defaults, key="cmp")
@@ -162,7 +164,7 @@ with col3:
         st.info("Select at least one country.")
 
 with col4:
-    st.subheader("Country distribution")
+    st.subheader("Countries by Development Status")
     fig4 = px.pie(df_dist, names="status", values="country_count", hole=0.5,
                   color_discrete_sequence=["#1D9E75","#378ADD"])
     fig4.update_traces(textposition="outside", textinfo="percent+label")
@@ -170,7 +172,7 @@ with col4:
     st.plotly_chart(fig4, use_container_width=True)
 
 with col5:
-    st.subheader("Distribution box plot")
+    st.subheader("Life Expectancy Distribution by Status")
     df_bx = apply_filters(df_box, year_col="year")
     fig5 = px.box(df_bx, x="status", y="lifeexpectancy", color="status", points="outliers",
                   color_discrete_map={"Developed": "#1D9E75", "Developing": "#378ADD"},
@@ -186,7 +188,7 @@ st.divider()
 col6, col7 = st.columns(2)
 
 with col6:
-    st.subheader("Vaccine coverage trend")
+    st.subheader("Average Vaccine Coverage Over Time")
     df_vt = df_vac_trend[df_vac_trend["year"].astype(int).between(*year_range)]
     fig6 = go.Figure()
     vac_map = {
@@ -204,7 +206,7 @@ with col6:
     st.plotly_chart(fig6, use_container_width=True)
 
 with col7:
-    st.subheader("Vaccine vs life expectancy")
+    st.subheader("Vaccine Coverage & Life Expectancy")
     vaccine_opts = {
         "hepatitisb_vaccine_coverage": "Hepatitis B",
         "polio_vaccine_coverage":      "Polio",
@@ -241,7 +243,7 @@ FACTORS = {
 }
 
 with col8:
-    st.subheader("Health factor vs life expectancy")
+    st.subheader("Health Factors & Life Expectancy")
     factor = st.selectbox("Factor", list(FACTORS.keys()),
                           format_func=lambda x: FACTORS[x], key="hf_sel")
     df_hf = apply_filters(df_health, year_col="year").dropna(subset=[factor, "lifeexpectancy"])
@@ -256,7 +258,7 @@ with col8:
     st.plotly_chart(fig8, use_container_width=True)
 
 with col9:
-    st.subheader("Correlations")
+    st.subheader("Health Factor Correlations")
     num_cols = list(FACTORS.keys()) + ["lifeexpectancy"]
     corr = (df_health[num_cols].dropna().corr()[["lifeexpectancy"]]
             .drop("lifeexpectancy")
@@ -270,7 +272,7 @@ with col9:
     st.plotly_chart(fig9, use_container_width=True)
 
 with col10:
-    st.subheader("Top & bottom 10")
+    st.subheader("Highest & Lowest Life Expectancy Countries")
     _, radio_col, _ = st.columns([1, 3, 1])
     with radio_col:
         view = st.radio("View", ["Top 10", "Bottom 10"], horizontal=True, key="tb_view")
