@@ -43,7 +43,20 @@ client = init_connection()
 
 @st.cache_data(ttl=600)
 def query(table: str) -> pd.DataFrame:
-    return pd.DataFrame(client.table(table).select("*").execute().data)
+    page_size = 1000
+    start = 0
+    rows = []
+
+    while True:
+        end = start + page_size - 1
+        page = client.table(table).select("*").range(start, end).execute().data
+        rows.extend(page)
+
+        if len(page) < page_size:
+            break
+        start += page_size
+
+    return pd.DataFrame(rows)
 
 # ── Load all data upfront ─────────────────────────────────────────────────────
 with st.spinner("Loading data..."):
@@ -89,13 +102,13 @@ df_kpi = apply_filters(df_box, year_col="year").dropna(subset=["lifeexpectancy"]
 k1, k2, k3, k4, k5 = st.columns(5)
 if df_kpi.empty:
     k1.metric("Avg life expectancy", "N/A")
-    k2.metric("Max life expectancy", "N/A")
-    k3.metric("Min life expectancy", "N/A")
+    k2.metric("Min life expectancy", "N/A")
+    k3.metric("Max life expectancy", "N/A")
     k4.metric("Total countries", 0)
 else:
     k1.metric("Avg life expectancy", f"{df_kpi['lifeexpectancy'].mean():.2f} yrs")
-    k2.metric("Max life expectancy", f"{df_kpi['lifeexpectancy'].max():.1f} yrs")
-    k3.metric("Min life expectancy", f"{df_kpi['lifeexpectancy'].min():.1f} yrs")
+    k2.metric("Min life expectancy", f"{df_kpi['lifeexpectancy'].min():.1f} yrs")
+    k3.metric("Max life expectancy", f"{df_kpi['lifeexpectancy'].max():.1f} yrs")
     k4.metric("Total countries", int(df_kpi["country"].nunique()))
 k5.metric("Year range", f"{year_range[0]}–{year_range[1]}")
 
@@ -202,6 +215,7 @@ with col7:
     df_vs = apply_filters(df_vac_sc, year_col="year").dropna(subset=[vax, "lifeexpectancy"])
     fig7 = px.scatter(df_vs, x=vax, y="lifeexpectancy", color="status", opacity=0.5,
                       trendline="ols",
+                      render_mode="svg",
                       color_discrete_map={"Developed": "#1D9E75", "Developing": "#378ADD"},
                       labels={vax: f"{vaccine_opts[vax]} coverage (%)", "lifeexpectancy": "Life exp (yrs)"},
                       hover_data=["country", "year"])
@@ -233,6 +247,7 @@ with col8:
     df_hf = apply_filters(df_health, year_col="year").dropna(subset=[factor, "lifeexpectancy"])
     fig8 = px.scatter(df_hf, x=factor, y="lifeexpectancy", color="status", opacity=0.45,
                       trendline="ols",
+                      render_mode="svg",
                       color_discrete_map={"Developed": "#1D9E75", "Developing": "#378ADD"},
                       labels={factor: FACTORS[factor], "lifeexpectancy": "Life exp (yrs)"},
                       hover_data=["country", "year"])
@@ -256,7 +271,9 @@ with col9:
 
 with col10:
     st.subheader("Top & bottom 10")
-    view = st.radio("View", ["Top 10 🏆", "Bottom 10 ⚠️"], horizontal=True, key="tb_view")
+    _, radio_col, _ = st.columns([1, 3, 1])
+    with radio_col:
+        view = st.radio("View", ["Top 10", "Bottom 10"], horizontal=True, key="tb_view")
     if "Top" in view:
         df_tb = df_top.sort_values("life_expectancy")
         bar_color = "#1D9E75"
